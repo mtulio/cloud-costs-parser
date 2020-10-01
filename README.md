@@ -99,7 +99,9 @@ Display the metadata fields.
 The fields inserted by parser:
 
 `_key` : the unique cost item identifier. Could be the PK of relational DBs.
+
 `_vendor`: the vendor from the source file
+
 `_datetime`: datetime of the importer 
 
 ### Fields `fields`
