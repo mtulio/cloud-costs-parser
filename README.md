@@ -1,16 +1,12 @@
 # cloud-costs-parser (State:Proposal)
 
-The Cloud Costs processor (Import/Export to common DB)
+The Cloud Costs processor, Importer/Exporter, to a database unified.
 
 ## Description
 
 Cloud Costs parser import CSV file costs data from Cloud Provider (initially AWS and Azure) and export to a common database - preferably NoSQL.
 
 ## Command (SPEC suggested)
-
-### Fields `fields`
-
-Extract the fields from the source file and show the output (without parsing).
 
 ### Parser `parser`
 
@@ -54,9 +50,24 @@ The field `identity/LineItemId` on CSV will be saved as `identity_LineItemId`
 
 - `--key-fields`
 
-Fields sepparated by commad that will be used to UID (Key) of cost item.
+Fields sepparated by commad that will be used to UID (`_key`) of cost item.
 
-For example on AWS CUR the following fields could be used to identify the cost item on whole file: `identity_LineItemId,identity_TimeStart`
+For example on AWS CUR the following fields could be used to identify the cost item on whole file: `identity_LineItemId,identity_TimeInterval`
+
+- `--transform-field-data`
+
+Default: `false`
+
+In AWS vendor, from the `identity/TimeInterval` (current day interval of cost item) field will be splited into `identity/TimeStart` and `identity/TimeEnd`.
+
+This option could be very helpfull on the queries on the database.
+
+
+- `--filter-keys KEYS`
+
+Default: `None`
+
+The keys sepparated by commad to be filtered on destination database - could save space, but could limit the insights.
 
 - `--out`
 
@@ -70,3 +81,33 @@ Example:
 `--out psql://server:5432/database/table?username=x,password=y`
 
 `--out aztables://stgAccount/TableName?storageKey=x`
+
+- `--out-builk-size N`
+
+Default: 100
+
+By default the write to output storage will be done by bulk inserts from 100, to change the size just set a new option.
+
+- `--out-indexes FIELDS`
+
+The fields name to be createed a index on destination storage (if applicable)
+
+- `--out-meta`
+
+Display the metadata fields.
+
+The fields inserted by parser:
+
+`_key` : the unique cost item identifier. Could be the PK of relational DBs.
+`_vendor`: the vendor from the source file
+`_datetime`: datetime of the importer 
+
+### Fields `fields`
+
+Extract the fields from the source file and show the output (without parsing).
+
+Subcommands allowed for this command:
+
+- `--in`
+
+The output will be the fields in input file and metadata fields.
